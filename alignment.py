@@ -18,7 +18,7 @@ def progressive_alignment( sequences, guide_tree, alignments ):
         seq_2 = [[sequences[guide_tree[1]][1], guide_tree[1]]]
     #if the tree is a tuple (a leaf), alignment is called on the sequences
     
-    return align_alignments(seq_1, seq_2)
+    return align_alignments(seq_1, seq_2)[0]
 
 def align_alignments( alignment_1, alignment_2 ):
     #core code written by Kimberlyn, repurposed by Domenic
@@ -56,6 +56,8 @@ def align_alignments( alignment_1, alignment_2 ):
     #figure out how to trace back
     i = len(alignment_2[0][0]) - 1
     j = len(alignment_1[0][0]) - 1
+
+    alignment_score = scoring_matrix[i, j]
     
     traceBackDirections = ""
     while i > 0 or j > 0:
@@ -119,7 +121,8 @@ def align_alignments( alignment_1, alignment_2 ):
             seq1spot = seq1spot - 1
 
     #append the lists of alignments to each other
-    new_alignments = new_alignment_1 + new_alignment_2
+    combined_alignments = new_alignment_1 + new_alignment_2
+    new_alignments = [combined_alignments, alignment_score]
 
     return new_alignments
 
