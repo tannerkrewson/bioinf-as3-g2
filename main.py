@@ -1,6 +1,8 @@
 from readfasta import readfasta
 import glob, os, sys
 
+from alignment import pairwise_alignment, multi_seq_alignment
+
 # from output import align
 
 def main():
@@ -21,8 +23,20 @@ def main():
     # grab the selected sequences from the cmd line args
     sequences_to_align = get_sequences_to_align_from_command_line( sequences )
 
-    for seq in sequences_to_align:
-        print(seq[0])
+    just_sequences = remove_sequence_names( sequences_to_align )
+
+    if len(just_sequences) == 2:
+        result = pairwise_alignment( just_sequences[0], just_sequences[1] )
+        aligned_sequences = result[0]
+        pairwise_score = result[1]
+    else:
+        guide_tree = []
+        aligned_sequences = multi_seq_alignment( just_sequences, guide_tree )
+
+    alignments = replace_sequences_with_alignments( sequences_to_align, aligned_sequences )
+
+    for seq in alignments:
+        print(seq[0], seq[1][:50])
 
 
 def get_sequences_to_align_from_command_line( all_sequences ):
@@ -44,6 +58,20 @@ def get_sequences_to_align_from_command_line( all_sequences ):
             sequences_to_align.append(the_sequence)
 
     return sequences_to_align
+
+
+def remove_sequence_names( sequences ):
+    result = []
+    for seq in sequences:
+        result.append(seq[1])
+
+    return result
+
+def replace_sequences_with_alignments( sequences, alignments ):
+    for i in len(sequences):
+        sequences[i][1] = alignments[i]
+
+    return sequences
 
 main()
 
