@@ -24,19 +24,16 @@ def main():
     # grab the selected sequences from the cmd line args
     sequences_to_align = get_sequences_to_align_from_command_line( sequences )
 
-    just_sequences = remove_sequence_names( sequences_to_align )
-
-    if len(just_sequences) == 2:
-        result = pairwise_alignment( just_sequences[0], just_sequences[1] )
+    if len(sequences_to_align) == 2:
+        result = pairwise_alignment( sequences_to_align[0], sequences_to_align[1] )
         aligned_sequences = result[0]
         pairwise_score = result[1]
     else:
-        guide_tree = generate_tree( just_sequences )
-        aligned_sequences = multi_seq_alignment( just_sequences, guide_tree )
+        guide_tree = generate_tree( sequences_to_align )
+        aligned_sequences = multi_seq_alignment( sequences_to_align, guide_tree )
 
-    alignments = replace_sequences_with_alignments( sequences_to_align, aligned_sequences )
-
-    print(alignments)
+    for sequence in aligned_sequences:
+        print(sequence[0][-120:])
 
 
 def get_sequences_to_align_from_command_line( all_sequences ):
