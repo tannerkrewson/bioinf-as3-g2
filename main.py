@@ -2,6 +2,7 @@ from readfasta import readfasta
 import glob, os, sys
 
 from alignment import pairwise_alignment, multi_seq_alignment
+from upgma import generate_tree
 
 # from output import align
 
@@ -30,13 +31,12 @@ def main():
         aligned_sequences = result[0]
         pairwise_score = result[1]
     else:
-        guide_tree = []
+        guide_tree = generate_tree( just_sequences )
         aligned_sequences = multi_seq_alignment( just_sequences, guide_tree )
 
     alignments = replace_sequences_with_alignments( sequences_to_align, aligned_sequences )
 
-    for seq in alignments:
-        print(seq[0], seq[1][:50])
+    print(alignments)
 
 
 def get_sequences_to_align_from_command_line( all_sequences ):
@@ -68,10 +68,10 @@ def remove_sequence_names( sequences ):
     return result
 
 def replace_sequences_with_alignments( sequences, alignments ):
-    for i in len(sequences):
+    for i in range(0, len(sequences)):
         sequences[i][1] = alignments[i]
 
     return sequences
 
-main()
-
+if __name__ == '__main__':
+    main()

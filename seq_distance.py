@@ -1,7 +1,7 @@
 import math
 import numpy
 import random
-from bootstrapping import align_alignments
+from alignment import align_alignments
 
 def find_distance( gene1, gene2, i, j):
 

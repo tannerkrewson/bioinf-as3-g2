@@ -1,3 +1,5 @@
+import numpy
+
 def pairwise_alignment( sequence1, sequence2 ):
     return align_alignments( [[sequence1, 0]], [[sequence2, 1]] )
 
