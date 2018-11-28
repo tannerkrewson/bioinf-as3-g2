@@ -1,7 +1,7 @@
 import numpy
 
 def pairwise_alignment( sequence1, sequence2 ):
-    return align_alignments( [[sequence1, 0]], [[sequence2, 1]] )
+    return align_alignments( [[sequence1[1], 0]], [[sequence2[1], 1]] )
 
 def multi_seq_alignment( sequences, guide_tree):
     aligned_sequences = progressive_alignment( sequences, guide_tree )
@@ -12,12 +12,14 @@ def progressive_alignment( sequences, guide_tree ):
 
     #recursive calls if a tree member is a tuple (not a leaf)
     if type(guide_tree[0]) == tuple:
-        seq_1 = progressive_alignment( sequences, guide_tree[0] )[0]
+        seq_1 = progressive_alignment( sequences, guide_tree[0] )
+        seq_1 = seq_1[0]
     else:
         seq_1 = [[sequences[guide_tree[0]][1], guide_tree[0]]]
 
     if type(guide_tree[1]) == tuple:
-        seq_2 = progressive_alignment( sequences, guide_tree[1] )[0]
+        seq_2 = progressive_alignment( sequences, guide_tree[1] )
+        seq_2 = seq_2[0]
     else:
         seq_2 = [[sequences[guide_tree[1]][1], guide_tree[1]]]
     #if the tree is a tuple (a leaf), alignment is called on the sequences
