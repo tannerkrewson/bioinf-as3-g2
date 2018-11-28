@@ -6,16 +6,16 @@ def multi_seq_alignment( sequences, guide_tree):
     ordered_sequences = reorder_alignments(aligned_sequences[0])
     return ordered_sequences
 
-def progressive_alignment( sequences, guide_tree, alignments ):
+def progressive_alignment( sequences, guide_tree ):
 
     #recursive calls if a tree member is a tuple (not a leaf)
     if type(guide_tree[0]) == tuple:
-        seq_1 = progressive_alignment( sequences, guide_tree[0], alignments )[0]
+        seq_1 = progressive_alignment( sequences, guide_tree[0] )[0]
     else:
         seq_1 = [[sequences[guide_tree[0]][1], guide_tree[0]]]
 
     if type(guide_tree[1]) == tuple:
-        seq_2 = progressive_alignment( sequences, guide_tree[1], alignments )[0]
+        seq_2 = progressive_alignment( sequences, guide_tree[1] )[0]
     else:
         seq_2 = [[sequences[guide_tree[1]][1], guide_tree[1]]]
     #if the tree is a tuple (a leaf), alignment is called on the sequences
