@@ -22,9 +22,7 @@ def progressive_alignment( sequences, guide_tree, alignments ):
 
 def align_alignments( alignment_1, alignment_2 ):
     #core code written by Kimberlyn, repurposed by Domenic
-    gp = -3.5
-    mb = 1
-    mp = -3
+    gap_penalty = -3.5
 
     #initialize all of the sequences or alignments with a '-'
     for i in range(len(alignment_1)):
@@ -32,28 +30,28 @@ def align_alignments( alignment_1, alignment_2 ):
     for i in range(len(alignment_2)):
         alignment_2[i][0] = "-" + alignment_2[i][0]
 
-    A = numpy.zeros((len(alignment_2[0][0]), len(alignment_1[0][0])))
+    scoring_matrix = numpy.zeros((len(alignment_2[0][0]), len(alignment_1[0][0])))
 
     #initialize first row
     for j in range(0, len(alignment_1[0][0])): 
-        A[0, j] = j * (gp * len(alignment_1[0][0]))
+        scoring_matrix[0, j] = j * (gap_penalty * len(alignment_1[0][0]))
 
     #initialize first column
     for i in range(0, len(alignment_2[0][0])): 
-        A[i, 0] = i * (gp * len(alignment_2[0][0]))
+        scoring_matrix[i, 0] = i * (gap_penalty * len(alignment_2[0][0]))
 
     #dp matrix calculation
     for i in range(1, len(alignment_2[0][0])):
         if (i % 100) == 0:
             print(i)
         for j in range(1, len(alignment_1[0][0])):
-            x = A[i-1, j-1]
-            x += calculate_cell_addition( alignment_1, alignment_2, i, j )
+            diagonal_cell = scoring_matrix[i-1, j-1]
+            diagonal_cell += calculate_cell_addition( alignment_1, alignment_2, i, j )
 
-            y = A[i, j-1] + (gp * len(alignment_1)) #value from the left
-            z = A[i-1, j] + (gp * len(alignment_2)) #value from above
+            left_cell = scoring_matrix[i, j-1] + (gap_penalty * len(alignment_1)) #value from the left
+            above_cell = scoring_matrix[i-1, j] + (gap_penalty * len(alignment_2)) #value from above
 
-            A[i, j] = max(x, y, z)
+            scoring_matrix[i, j] = max(diagonal_cell, left_cell, above_cell)
 
     #figure out how to trace back
     i = len(alignment_2[0][0]) - 1
@@ -61,21 +59,21 @@ def align_alignments( alignment_1, alignment_2 ):
     
     traceBackDirections = ""
     while i > 0 or j > 0:
-        x = A[i-1, j-1]
-        x += calculate_cell_addition( alignment_1, alignment_2, i, j)
-        y = A[i, j-1] + (gp * len(alignment_1)) #value from the left
-        z = A[i-1, j] + (gp * len(alignment_2)) #value from above
+        diagonal_cell = scoring_matrix[i-1, j-1]
+        diagonal_cell += calculate_cell_addition( alignment_1, alignment_2, i, j)
+        left_cell = scoring_matrix[i, j-1] + (gap_penalty * len(alignment_1)) #value from the left
+        above_cell = scoring_matrix[i-1, j] + (gap_penalty * len(alignment_2)) #value from above
 
-        if A[i, j] == x and i >= 0 and j >= 0:
+        if scoring_matrix[i, j] == diagonal_cell and i >= 0 and j >= 0:
             #trace back to the diagonal
             traceBackDirections = traceBackDirections + "d" 
             i = i - 1
             j = j - 1
-        elif A[i, j] == y and i >= 0 and j >= 0:
+        elif scoring_matrix[i, j] == left_cell and i >= 0 and j >= 0:
             #trace back to the left
             traceBackDirections = traceBackDirections + "b"
             j = j - 1
-        else:
+        else: #scoring_matrix[i, j] == above_cell
             #trace back to above
             traceBackDirections = traceBackDirections + "u"
             i = i - 1
@@ -124,6 +122,21 @@ def align_alignments( alignment_1, alignment_2 ):
     new_alignments = new_alignment_1 + new_alignment_2
 
     return new_alignments
+
+def calculate_cell_addition( alignment_1, alignment_2, i, j ):
+    #calculates the value to add to a cell given the alignments
+    match_bonus = 1
+    mismatch_penalty = -2
+    cell_addition = 0
+
+    for sequence_1 in alignment_1:
+        for sequence_2 in alignment_2:
+            if (sequence_2[0][i] == sequence_1[0][j]):
+                cell_addition += match_bonus #value from diagonal if they match
+            else:
+                cell_addition += mismatch_penalty #value from diagonal if they don't match
+
+    return cell_addition
 
 def reorder_alignments(aligns):
     #sorts the alignments by their sequence number
