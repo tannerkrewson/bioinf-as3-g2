@@ -1,7 +1,7 @@
 def pairwise_alignment( sequence1, sequence2 ):
     return align_alignments( sequence1, sequence2 )
 
-def multi_seq_alignment)( sequences, guide_tree):
+def multi_seq_alignment( sequences, guide_tree):
     aligned_sequences = progressive_alignment( sequences, guide_tree )
     ordered_sequences = reorder_alignments(aligned_sequences[0])
     return ordered_sequences
