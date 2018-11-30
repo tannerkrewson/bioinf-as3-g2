@@ -3,6 +3,7 @@ import glob, os, sys
 
 from alignment_class import Alignment
 from upgma import generate_tree
+from visualize import alignment_output
 
 # from output import align
 
@@ -26,8 +27,7 @@ def main():
 
     the_alignment = Alignment( sequences_to_align )
 
-    for sequence in the_alignment.aligned_sequences:
-        print(sequence[0][-120:])
+    alignment_output(the_alignment)
 
 
 def get_sequences_to_align_from_command_line( all_sequences ):
