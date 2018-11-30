@@ -56,7 +56,7 @@ class Alignment:
         
         return align_alignments( seq_1, seq_2 )
 
-def align_sequences( sequence_1, sequcence_2 ):
+def align_sequences( sequence_1, sequence_2 ):
     #core code written by Kimberlyn, repurposed by Domenic
     gap_penalty = -3.5
 
@@ -64,7 +64,7 @@ def align_sequences( sequence_1, sequcence_2 ):
     alignment_1 = "-" + alignment_1
     alignment_2 = "-" + alignment_2
 
-    scoring_matrix = numpy.zeros((len(sequcence_2), len(sequcence_1)))
+    scoring_matrix = numpy.zeros((len(sequence_2), len(sequence_1)))
 
     #initialize first row
     for j in range(0, len(sequence_1)): 
