@@ -34,7 +34,7 @@ class Alignment:
 
     def multi_alignment( self ):
         self.phylo_tree = generate_tree( self.sequence_list )
-        self.aligned_sequences = self.progressive_alignment( phylo_tree )
+        self.aligned_sequences = self.progressive_alignment( self.phylo_tree )
 
     def progressive_alignment( self, guide_tree ):
         left_tree = guide_tree[0]
@@ -61,8 +61,8 @@ def align_sequences( sequence_1, sequence_2 ):
     gap_penalty = -3.5
 
     #initialize all of the sequences or alignments with a '-'
-    alignment_1 = "-" + alignment_1
-    alignment_2 = "-" + alignment_2
+    sequence_1 = "-" + sequence_1
+    sequence_2 = "-" + sequence_2
 
     scoring_matrix = numpy.zeros((len(sequence_2), len(sequence_1)))
 
