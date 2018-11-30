@@ -1,6 +1,6 @@
 def alignment_output( alignment ):
-    seq_1 = alignment.alignment_list[0]
-    seq_2 = alignment.alignment_list[1]
+    seq_1 = alignment.aligned_sequences[0]
+    seq_2 = alignment.aligned_sequences[1]
 
     seq_1_name = alignment.name_list[0]
     seq_2_name = alignment.name_list[1]

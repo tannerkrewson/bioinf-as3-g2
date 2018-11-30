@@ -7,14 +7,16 @@ class Alignment:
         self.sequence_list = []
 
         for i in range(len(seq_list)):
-            self.name_list[i] = seq_list[i][0]
-            self.sequence_list[i] = seq_list[i][1]
+            self.name_list.append(seq_list[i][0])
+            self.sequence_list.append(seq_list[i][1])
 
         self.aligned_sequences = []
         self.phylo_tree = ()
 
         self.score = 0
         self.percent_identical_sites = 0
+
+        self.align()
 
     def align( self ):
         if len(self.sequence_list) == 2:
