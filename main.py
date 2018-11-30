@@ -1,7 +1,7 @@
 from readfasta import readfasta
 import glob, os, sys
 
-from alignment import Alignment
+from alignment_class import Alignment
 from upgma import generate_tree
 
 # from output import align
@@ -25,7 +25,7 @@ def main():
     sequences_to_align = get_sequences_to_align_from_command_line( sequences )
 
     the_alignment = Alignment( sequences_to_align )
-    
+
     for sequence in the_alignment.aligned_sequences:
         print(sequence[0][-120:])
 
