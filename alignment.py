@@ -1,30 +1,61 @@
 import numpy
 
-def pairwise_alignment( sequence1, sequence2 ):
-    return align_alignments( [[sequence1[1], 0]], [[sequence2[1], 1]] )
+from upgma import generate_tree
 
-def multi_seq_alignment( sequences, guide_tree):
-    aligned_sequences = progressive_alignment( sequences, guide_tree )
-    ordered_sequences = reorder_alignments(aligned_sequences[0])
-    return ordered_sequences
+class Alignment:
+    def __init__( self, seq_list ):
+        self.name_list = []
+        self.sequence_list = []
 
-def progressive_alignment( sequences, guide_tree ):
+        for i in range(len(seq_list)):
+            self.name_list[i] = seq_list[i][0]
+            self.sequence_list[i] = seq_list[i][1]
 
-    #recursive calls if a tree member is a tuple (not a leaf)
-    if type(guide_tree[0]) == tuple:
-        seq_1 = progressive_alignment( sequences, guide_tree[0] )
-        seq_1 = seq_1[0]
-    else:
-        seq_1 = [[sequences[guide_tree[0]][1], guide_tree[0]]]
+        self.aligned_sequences = []
 
-    if type(guide_tree[1]) == tuple:
-        seq_2 = progressive_alignment( sequences, guide_tree[1] )
-        seq_2 = seq_2[0]
-    else:
-        seq_2 = [[sequences[guide_tree[1]][1], guide_tree[1]]]
-    #if the tree is a tuple (a leaf), alignment is called on the sequences
-    
-    return align_alignments(seq_1, seq_2)
+        self.score = 0
+        self.percent_identical_sites = 0
+
+    def align( self ):
+        if len(self.sequence_list) == 2:
+            self.pairwise_alignment()
+        else:
+            self.multi_alignment()
+
+    def pairwise_alignment( self ):
+        result = align_alignments( self.sequence_list[0], self.sequence_list[1] )
+
+        # the first two things in the result will be the alignments
+        self.aligned_sequences.append(result[0])
+        self.aligned_sequences.append(result[1])
+
+        self.score = result[2]
+
+    def multi_alignment( self ):
+        self.aligned_sequences = self.sequence_list.copy()
+        
+        guide_tree = generate_tree( self.sequence_list )
+        self.progressive_alignment( guide_tree )
+
+    def progressive_alignment( self, guide_tree ):
+        left_tree = guide_tree[0]
+        right_tree = guide_tree[1]
+
+        # recurse if a tree member is a tuple
+        # else its a leaf, so don't recurse
+        if type( left_tree ) == tuple:
+            alignment_pair = self.progressive_alignment( left_tree )
+            seq_1 = alignment_pair[0]
+        else:
+            seq_1 = self.aligned_sequences[left_tree]
+
+        if type( right_tree ) == tuple:
+            alignment_pair = self.progressive_alignment( right_tree )
+            seq_2 = alignment_pair[1]
+        else:
+            seq_2 = self.aligned_sequences[right_tree]
+        
+        return align_alignments( seq_1, seq_2 )
 
 def align_alignments( alignment_1, alignment_2 ):
     #core code written by Kimberlyn, repurposed by Domenic
