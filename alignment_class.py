@@ -60,3 +60,40 @@ class Alignment:
             seq_2 = [self.sequence_list[right_tree]]
         
         return align_alignments( seq_1, seq_2 )
+    
+    # the percent of sites identical, the overall score, 
+    # the parameters used, etc
+    def print_summary( self ):
+
+        for seq in self.aligned_sequences:
+            print(seq[:120])
+
+        print("\n*** SUMMARY ***")
+        print("Phylogenetic tree:", self.phylo_tree)
+        print("Percent of identical sites:", self.get_percent_sites_identical())
+        print("Overall score:", self.score if len(self.aligned_sequences) == 2 else "n/a for multi seq alignment")
+        print("Parameters used:", "what does this mean")
+        print("*** END SUMMARY ***\n")
+        
+    def get_percent_sites_identical( self ):
+        equal_sites = 0
+        total_sites = len(self.aligned_sequences[0])
+
+        for i in range(total_sites):
+            base_of_first_seq = self.aligned_sequences[0][i]
+
+            if base_of_first_seq == '-':
+                continue
+
+            all_equal = True
+            for seq in self.aligned_sequences:
+                if base_of_first_seq != seq[i]:
+                    all_equal = False
+                    break
+
+            if all_equal:
+                equal_sites += 1
+    
+        return equal_sites / total_sites
+
+            

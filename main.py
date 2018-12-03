@@ -26,6 +26,8 @@ def main():
 
     the_alignment = Alignment( sequences_to_align )
 
+    the_alignment.print_summary()
+    
     alignment_output(the_alignment)
 
 
