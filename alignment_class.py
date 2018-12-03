@@ -25,6 +25,7 @@ class Alignment:
             self.multi_alignment()
 
     def pairwise_alignment( self ):
+        print("running pairwise alignment")
         result = align_sequences( self.sequence_list[0], self.sequence_list[1] )
 
         # the first two things in the result will be the alignments
@@ -34,7 +35,10 @@ class Alignment:
         self.score = result[2]
 
     def multi_alignment( self ):
+        print("generating tree")
         self.phylo_tree = generate_tree( self.sequence_list )
+
+        print("running multi sequence alignment")
         self.aligned_sequences = self.progressive_alignment( self.phylo_tree )
 
     def progressive_alignment( self, guide_tree ):

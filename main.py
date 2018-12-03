@@ -16,7 +16,6 @@ def main():
     os.chdir( os.getcwd() + "/genes/" )
     for file in glob.glob( "*.fasta" ):
         # read all the genes from the fasta file
-        print( file )
         filename = file.split(".")[0]
 
         genes = readfasta( file )
