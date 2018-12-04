@@ -69,7 +69,7 @@ class Alignment:
             print(seq[:120])
 
         print("\n*** SUMMARY ***")
-        print("Phylogenetic tree:", self.phylo_tree)
+        print("Phylogenetic tree:", self.phylo_tree if len(self.aligned_sequences) != 2 else "n/a for pairwise alignment")
         print("Percent of identical sites:", self.get_percent_sites_identical())
         print("Overall score:", self.score if len(self.aligned_sequences) == 2 else "n/a for multi seq alignment")
         print("Parameters used:", "what does this mean")

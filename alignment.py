@@ -20,8 +20,9 @@ def align_sequences( sequence_1, sequence_2 ):
 
     #dp matrix calculation
     for i in range(1, len(sequence_2)):
-        if (i % 100) == 0:
-            print(i)
+        if (i % 250) == 0:
+            print(int(i/len(sequence_2)*100), "%")
+
         for j in range(1, len(sequence_1)):
             diagonal_cell = scoring_matrix[i-1, j-1]
             diagonal_cell += calculate_sequence_cell( sequence_1, sequence_2, i, j )
@@ -93,6 +94,7 @@ def align_sequences( sequence_1, sequence_2 ):
     #append the lists of alignments to each other
     aligned_sequences = [new_sequence_1, new_sequence_2, alignment_score]
 
+    print("done!")
     return aligned_sequences
 
 def align_alignments( alignment_1, alignment_2 ):
@@ -123,8 +125,9 @@ def align_alignments( alignment_1, alignment_2 ):
 
     #dp matrix calculation
     for i in range(1, len(alignment_2[0])):
-        if (i % 100) == 0:
-            print(i)
+        if (i % 250) == 0:
+            print(int(i/len(alignment_2[0])*100), "%")
+
         for j in range(1, len(alignment_1[0])):
             diagonal_cell = scoring_matrix[i-1, j-1]
             diagonal_cell += calculate_alignment_cell( alignment_1, alignment_2, i, j )
@@ -204,6 +207,7 @@ def align_alignments( alignment_1, alignment_2 ):
     #append the lists of alignments to each other
     new_alignments = new_alignment_1 + new_alignment_2
 
+    print("done!")
     return new_alignments
 
 def calculate_alignment_cell( alignment_1, alignment_2, i, j ):
