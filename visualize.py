@@ -4,6 +4,10 @@ def alignment_output( alignment ):
 
     seq_1_name = alignment.name_list[0]
     seq_2_name = alignment.name_list[1]
+
+    #shorten name if too long
+    seq_1_name = seq_1_name[:19]
+    seq_2_name = seq_2_name[:19]
     
     max_per_line = 50
 
@@ -14,7 +18,7 @@ def alignment_output( alignment ):
     end_place = max_per_line
     place_mark = 0
     while (len(seq1) // end_place) >= 1:
-        print(f'{seq_1_name:20} {(start_place + 1 - dash_count_1):3} {seq1[start_place : end_place]}')
+        print(f'{seq_1_name:20} {(start_place + 1 - dash_count_1):5} {seq1[start_place : end_place]}')
 
         #create the middle part
         alignment = ""
@@ -32,9 +36,9 @@ def alignment_output( alignment ):
                 alignment += '.'
             place_mark += 1
         #print(alignment)
-        print((alignment).rjust(25 + max_per_line))
+        print((alignment).rjust(27 + max_per_line))
 
-        print(f'{seq_2_name:20} {(start_place + 1 - dash_count_2):3} {seq2[start_place : end_place]}')
+        print(f'{seq_2_name:20} {(start_place + 1 - dash_count_2):5} {seq2[start_place : end_place]}')
         print()
         
         start_place += max_per_line
@@ -43,7 +47,7 @@ def alignment_output( alignment ):
 
     #print the leftovers if needed
     if (len(seq1) % max_per_line) != 0:  
-        print(f'{seq_1_name:20} {(start_place + 1 - dash_count_1):3} {seq1[start_place:]}')
+        print(f'{seq_1_name:20} {(start_place + 1 - dash_count_1):5} {seq1[start_place:]}')
 
         alignment = ""
         for place_mark in range (start_place, len(seq1)):
@@ -57,6 +61,6 @@ def alignment_output( alignment ):
                 alignment += '|'
             else:
                 alignment += '.'
-        print((alignment).rjust(25 + len(seq1) - start_place))
+        print((alignment).rjust(27 + len(seq1) - start_place))
                 
-        print(f'{seq_2_name:20} {(start_place + 1 - dash_count_2):3} {seq2[start_place:]}')
+        print(f'{seq_2_name:20} {(start_place + 1 - dash_count_2):5} {seq2[start_place:]}')
