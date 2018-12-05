@@ -28,7 +28,7 @@ def main():
 
     the_alignment.print_summary()
     
-    alignment_output(the_alignment)
+    alignment_output( the_alignment )
 
 
 def get_sequences_to_align_from_command_line( all_sequences ):
@@ -41,15 +41,29 @@ def get_sequences_to_align_from_command_line( all_sequences ):
     current_file = ""
 
     # for each cmd line argument (0 is "main.py", so skip that)
-    for i in range(1, len(sys.argv)):
+    for i in range( 1, len(sys.argv) ):
         arg = sys.argv[i]
         if arg.startswith("H"):
             current_file = arg
         else:
             the_sequence = all_sequences[current_file][int(arg)]
-            sequences_to_align.append(the_sequence)
+            sequences_to_align.append( the_sequence )
 
     return sequences_to_align
+
+
+def remove_sequence_names( sequences ):
+    result = []
+    for seq in sequences:
+        result.append(seq[1])
+
+    return result
+
+def replace_sequences_with_alignments( sequences, alignments ):
+    for i in range( 0, len(sequences) ):
+        sequences[i][1] = alignments[i]
+
+    return sequences
 
 if __name__ == '__main__':
     main()
