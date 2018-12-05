@@ -45,6 +45,9 @@ class Alignment:
         left_tree = guide_tree[0]
         right_tree = guide_tree[1]
 
+        seq_1_single = False
+        seq_2_single = False
+
         # recurse if a tree member is a tuple
         # else its a leaf, so don't recurse
         if type( left_tree ) == tuple:
@@ -52,14 +55,19 @@ class Alignment:
             seq_1 = alignments
         else:
             seq_1 = [self.sequence_list[left_tree]]
+            seq_1_single = True
 
         if type( right_tree ) == tuple:
             alignments = self.progressive_alignment( right_tree )
             seq_2 = alignments
         else:
             seq_2 = [self.sequence_list[right_tree]]
-        
-        return align_alignments( seq_1, seq_2 )
+            seq_2_single = True
+
+        if seq_1_single and seq_2_single:
+            return align_sequences( seq_1[0], seq_2[0] )[:2]
+        else:
+            return align_alignments( seq_1, seq_2 )
     
     # the percent of sites identical, the overall score, 
     # the parameters used, etc
