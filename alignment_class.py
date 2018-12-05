@@ -96,4 +96,5 @@ class Alignment:
     
         return equal_sites / total_sites
 
-            
+    def get_name( self, index ):
+        return self.name_list[index]
