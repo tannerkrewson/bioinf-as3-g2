@@ -45,6 +45,9 @@ class Alignment:
         left_tree = guide_tree[0]
         right_tree = guide_tree[1]
 
+        seq_1_single = False
+        seq_2_single = False
+
         # recurse if a tree member is a tuple
         # else its a leaf, so don't recurse
         if type( left_tree ) == tuple:
@@ -52,28 +55,35 @@ class Alignment:
             seq_1 = alignments
         else:
             seq_1 = [self.sequence_list[left_tree]]
+            seq_1_single = True
 
         if type( right_tree ) == tuple:
             alignments = self.progressive_alignment( right_tree )
             seq_2 = alignments
         else:
             seq_2 = [self.sequence_list[right_tree]]
-        
-        return align_alignments( seq_1, seq_2 )
+            seq_2_single = True
+
+        if seq_1_single and seq_2_single:
+            return align_sequences( seq_1[0], seq_2[0] )[:2]
+        else:
+            return align_alignments( seq_1, seq_2 )
     
     # the percent of sites identical, the overall score, 
     # the parameters used, etc
     def print_summary( self ):
-
-        for seq in self.aligned_sequences:
-            print(seq[:120])
-
         print("\n*** SUMMARY ***")
-        print("Phylogenetic tree:", self.phylo_tree if len(self.aligned_sequences) != 2 else "n/a for pairwise alignment")
         print("Percent of identical sites:", self.get_percent_sites_identical())
         print("Overall score:", self.score if len(self.aligned_sequences) == 2 else "n/a for multi seq alignment")
-        print("Parameters used:", "what does this mean")
-        print("*** END SUMMARY ***\n")
+        print("Parameters used:", "mm -3; mb +2, gap -5, gap2 -3, gap3 -1")
+        print("")
+
+        if len(self.aligned_sequences) != 2:
+            print("Phylogenetic tree:", self.phylo_tree)
+            for i in range(len(self.name_list)):
+                print(i, "=", self.name_list[i])
+
+        print("\n*** END SUMMARY ***\n")
         
     def get_percent_sites_identical( self ):
         equal_sites = 0
@@ -96,4 +106,5 @@ class Alignment:
     
         return equal_sites / total_sites
 
-            
+    def get_name( self, index ):
+        return self.name_list[index]
