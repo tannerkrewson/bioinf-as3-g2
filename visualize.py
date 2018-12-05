@@ -82,12 +82,16 @@ def alignment_output( alignment ):
     start_printed = 0
     start_index = 0
     end = max_line
-    LONG_INDEX = 0 #The index of the longest string in the list if needed
-    dash_count = [0] * len(sequences) #List of the amount of dashes in each sequenes initialize to 0
+    #The index of the longest string in the list if needed
+    LONG_INDEX = 0 
+    #List of the amount of dashes in each sequenes initialize to 0
+    dash_count = [0] * len(sequences) 
 
     print("Multisequence Alignment")
-  
-    for i in range ( len(sequences) ): #find index for longest string in list (only matters if alignments are different size)
+
+    #find index for longest string in list
+    #(only matters if alignments are different size)
+    for i in range ( len(sequences) ): 
         if ( max( len(sequences[LONG_INDEX]), len(sequences[i]) ) == len(sequences[i]) ):
           LONG_INDEX = i
 
@@ -98,7 +102,8 @@ def alignment_output( alignment ):
           for j in range ( len(sequences[i][start_index:end]) ):
             if( sequences[i][j] == '-' ): #check to see it there's a gap
                 dash_count[i] += 1
-          sequences[i] = sequences[i][max_line:] #take off string that has been writen
+          #take off string that has been writen
+          sequences[i] = sequences[i][max_line:] 
         start_printed += max_line
 
 
