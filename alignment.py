@@ -21,16 +21,16 @@ def align_sequences( sequence_1, sequence_2 ):
     #initialize first row
     for j in range(0, len(sequence_1)):
         if len(direction_matrix[0, j - 1]) > 2:
-            direction_matrix[0, j] = "b"
+            direction_matrix[0, j] = "l"
         else:
-            direction_matrix[0, j] = direction_matrix[0, j - 1] + "b"
+            direction_matrix[0, j] = direction_matrix[0, j - 1] + "l"
 
     #initialize first column
     for i in range(0, len(sequence_2)):
         if len(direction_matrix[i - 1, 0]) > 2:
-            direction_matrix[i, 0] = "u"
+            direction_matrix[i, 0] = "a"
         else:
-            direction_matrix[i, 0] = direction_matrix[i - 1, 0] + "u"
+            direction_matrix[i, 0] = direction_matrix[i - 1, 0] + "a"
 
     #dp matrix calculation
     for i in range(1, len(sequence_2)):
@@ -41,12 +41,12 @@ def align_sequences( sequence_1, sequence_2 ):
             diagonal_cell = scoring_matrix[i-1, j-1]
             diagonal_cell += calculate_sequence_cell( sequence_1, sequence_2, i, j )
 
-            if direction_matrix[i, j-1][0] == "b":
+            if direction_matrix[i, j-1][0] == "l":
                 left_cell = scoring_matrix[i, j-1] + calculate_sequence_gap_penalty(len(direction_matrix[i, j-1]))
             else:
                 left_cell = scoring_matrix[i, j-1] + calculate_sequence_gap_penalty(0) #value from the left
             
-            if direction_matrix[i-1, j][0] == "u":
+            if direction_matrix[i-1, j][0] == "a":
                 above_cell = scoring_matrix[i-1, j] + calculate_sequence_gap_penalty(len(direction_matrix[i-1, j]))
             else:
                 above_cell = scoring_matrix[i-1, j] + calculate_sequence_gap_penalty(0) #value from above
@@ -56,15 +56,15 @@ def align_sequences( sequence_1, sequence_2 ):
             scoring_matrix[i, j] = max_of_cells
 
             if max_of_cells == left_cell:
-                if direction_matrix[i, j-1][0] == "b":
-                    direction_matrix[i, j] = direction_matrix[i, j-1][:len(direction_matrix[i, j-1]) % 3] + "b"
+                if direction_matrix[i, j-1][0] == "l":
+                    direction_matrix[i, j] = direction_matrix[i, j-1][:len(direction_matrix[i, j-1]) % 3] + "l"
                 else:
-                    direction_matrix[i, j] = "b"
+                    direction_matrix[i, j] = "l"
             elif max_of_cells == above_cell:
-                if direction_matrix[i-1, j][0] == "u":
-                    direction_matrix[i, j] = direction_matrix[i-1, j][:len(direction_matrix[i-1, j]) % 3] + "u"
+                if direction_matrix[i-1, j][0] == "a":
+                    direction_matrix[i, j] = direction_matrix[i-1, j][:len(direction_matrix[i-1, j]) % 3] + "a"
                 else:
-                    direction_matrix[i, j] = "u"
+                    direction_matrix[i, j] = "a"
             else:
                 direction_matrix[i, j] = "d"
 
@@ -120,14 +120,14 @@ def align_sequences( sequence_1, sequence_2 ):
 
             seq1spot = seq1spot - 1
             seq2spot = seq2spot - 1
-        if direction_matrix[seq2spot, seq1spot][0] == "u":
+        if direction_matrix[seq2spot, seq1spot][0] == "a":
             new_sequence_1 = '-' + new_sequence_1
 
             new_sequence_2 = sequence_2[seq2spot] + \
             new_sequence_2
 
             seq2spot = seq2spot - 1
-        if direction_matrix[seq2spot, seq1spot][0] == "b":
+        if direction_matrix[seq2spot, seq1spot][0] == "l":
             new_sequence_1 = sequence_1[seq1spot] + \
             new_sequence_1
 
