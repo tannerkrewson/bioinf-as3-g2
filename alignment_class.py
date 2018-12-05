@@ -64,16 +64,18 @@ class Alignment:
     # the percent of sites identical, the overall score, 
     # the parameters used, etc
     def print_summary( self ):
-
-        for seq in self.aligned_sequences:
-            print(seq[:120])
-
         print("\n*** SUMMARY ***")
-        print("Phylogenetic tree:", self.phylo_tree if len(self.aligned_sequences) != 2 else "n/a for pairwise alignment")
         print("Percent of identical sites:", self.get_percent_sites_identical())
         print("Overall score:", self.score if len(self.aligned_sequences) == 2 else "n/a for multi seq alignment")
-        print("Parameters used:", "what does this mean")
-        print("*** END SUMMARY ***\n")
+        print("Parameters used:", "mm -3; mb +2, gap -5, gap2 -3, gap3 -1")
+        print("")
+
+        if len(self.aligned_sequences) != 2:
+            print("Phylogenetic tree:", self.phylo_tree)
+            for i in range(len(self.name_list)):
+                print(i, "=", self.name_list[i])
+
+        print("\n*** END SUMMARY ***\n")
         
     def get_percent_sites_identical( self ):
         equal_sites = 0

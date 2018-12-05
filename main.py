@@ -30,8 +30,6 @@ def main():
     
     alignment_output(the_alignment)
 
-    #alignment_output(the_alignment)
-
 
 def get_sequences_to_align_from_command_line( all_sequences ):
     # eg: main.py H1N1 0 1 4 H5N1 0 1
@@ -52,20 +50,6 @@ def get_sequences_to_align_from_command_line( all_sequences ):
             sequences_to_align.append(the_sequence)
 
     return sequences_to_align
-
-
-def remove_sequence_names( sequences ):
-    result = []
-    for seq in sequences:
-        result.append(seq[1])
-
-    return result
-
-def replace_sequences_with_alignments( sequences, alignments ):
-    for i in range(0, len(sequences)):
-        sequences[i][1] = alignments[i]
-
-    return sequences
 
 if __name__ == '__main__':
     main()
