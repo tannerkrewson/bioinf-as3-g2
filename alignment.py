@@ -2,21 +2,35 @@ import numpy
 
 def align_sequences( sequence_1, sequence_2 ):
     #core code written by Kimberlyn, repurposed by Domenic
-    gap_penalty = -3.5
 
     #initialize all of the sequences or alignments with a '-'
     sequence_1 = "-" + sequence_1
     sequence_2 = "-" + sequence_2
 
     scoring_matrix = numpy.zeros((len(sequence_2), len(sequence_1)))
+    direction_matrix = numpy.empty((len(sequence_2), len(sequence_1)), dtype=str)
 
     #initialize first row
-    for j in range(0, len(sequence_1)): 
-        scoring_matrix[0, j] = j * gap_penalty
+    for j in range(0, len(sequence_1)):
+        scoring_matrix[0, j] = scoring_matrix[0, j - 1] + calculate_sequence_gap_penalty( j )
 
     #initialize first column
     for i in range(0, len(sequence_2)): 
-        scoring_matrix[i, 0] = i * gap_penalty
+        scoring_matrix[i, 0] = scoring_matrix[i - 1, 0] + calculate_sequence_gap_penalty( i )
+
+    #initialize first row
+    for j in range(0, len(sequence_1)):
+        if len(direction_matrix[0, j - 1]) > 2:
+            direction_matrix[0, j] = "b"
+        else:
+            direction_matrix[0, j] = direction_matrix[0, j - 1] + "b"
+
+    #initialize first column
+    for i in range(0, len(sequence_2)):
+        if len(direction_matrix[i - 1, 0]) > 2:
+            direction_matrix[i, 0] = "u"
+        else:
+            direction_matrix[i, 0] = direction_matrix[i - 1, 0] + "u"
 
     #dp matrix calculation
     for i in range(1, len(sequence_2)):
@@ -27,10 +41,32 @@ def align_sequences( sequence_1, sequence_2 ):
             diagonal_cell = scoring_matrix[i-1, j-1]
             diagonal_cell += calculate_sequence_cell( sequence_1, sequence_2, i, j )
 
-            left_cell = scoring_matrix[i, j-1] + gap_penalty #value from the left
-            above_cell = scoring_matrix[i-1, j] + gap_penalty #value from above
+            if direction_matrix[i, j-1][0] == "b":
+                left_cell = scoring_matrix[i, j-1] + calculate_sequence_gap_penalty(len(direction_matrix[i, j-1]))
+            else:
+                left_cell = scoring_matrix[i, j-1] + calculate_sequence_gap_penalty(0) #value from the left
+            
+            if direction_matrix[i-1, j][0] == "u":
+                above_cell = scoring_matrix[i-1, j] + calculate_sequence_gap_penalty(len(direction_matrix[i-1, j]))
+            else:
+                above_cell = scoring_matrix[i-1, j] + calculate_sequence_gap_penalty(0) #value from above
 
-            scoring_matrix[i, j] = max(diagonal_cell, left_cell, above_cell)
+            max_of_cells = max(diagonal_cell, left_cell, above_cell)
+
+            scoring_matrix[i, j] = max_of_cells
+
+            if max_of_cells == left_cell:
+                if direction_matrix[i, j-1][0] == "b":
+                    direction_matrix[i, j] = direction_matrix[i, j-1][:len(direction_matrix[i, j-1]) % 3] + "b"
+                else:
+                    direction_matrix[i, j] = "b"
+            elif max_of_cells == above_cell:
+                if direction_matrix[i-1, j][0] == "u":
+                    direction_matrix[i, j] = direction_matrix[i-1, j][:len(direction_matrix[i-1, j]) % 3] + "u"
+                else:
+                    direction_matrix[i, j] = "u"
+            else:
+                direction_matrix[i, j] = "d"
 
     #figure out how to trace back
     i = len(sequence_2) - 1
@@ -38,6 +74,7 @@ def align_sequences( sequence_1, sequence_2 ):
 
     alignment_score = scoring_matrix[i, j]
     
+    '''
     traceBackDirections = ""
     while i > 0 or j > 0:
         diagonal_cell = scoring_matrix[i-1, j-1]
@@ -50,14 +87,21 @@ def align_sequences( sequence_1, sequence_2 ):
             traceBackDirections = traceBackDirections + "d" 
             i = i - 1
             j = j - 1
+            sequence_1_gaps = 0
+            sequence_2_gaps = 0
         elif scoring_matrix[i, j] == left_cell and i >= 0 and j >= 0:
             #trace back to the left
             traceBackDirections = traceBackDirections + "b"
             j = j - 1
+            sequence_1_gaps += 1
+            sequence_2_gaps = 0
         else: #scoring_matrix[i, j] == above_cell
             #trace back to above
             traceBackDirections = traceBackDirections + "u"
             i = i - 1
+            sequence_2_gaps += 1
+            sequence_1_gaps = 0
+        '''
 
     #align with the trace back directions 
     seq1spot = len(sequence_1) - 1
@@ -65,9 +109,9 @@ def align_sequences( sequence_1, sequence_2 ):
     #initialize a new list of alignments
     new_sequence_1 = ""
     new_sequence_2 = ""
-    for i in range(len(traceBackDirections)):
+    while seq1spot > 0 or seq2spot > 0:
         #choose the direction based on current instruction
-        if traceBackDirections[i] == "d":
+        if direction_matrix[seq2spot, seq1spot][0] == "d":
             new_sequence_1 = sequence_1[seq1spot] + \
             new_sequence_1
 
@@ -76,14 +120,14 @@ def align_sequences( sequence_1, sequence_2 ):
 
             seq1spot = seq1spot - 1
             seq2spot = seq2spot - 1
-        if traceBackDirections[i] == "u":
+        if direction_matrix[seq2spot, seq1spot][0] == "u":
             new_sequence_1 = '-' + new_sequence_1
 
             new_sequence_2 = sequence_2[seq2spot] + \
             new_sequence_2
 
             seq2spot = seq2spot - 1
-        if traceBackDirections[i] == "b":
+        if direction_matrix[seq2spot, seq1spot][0] == "b":
             new_sequence_1 = sequence_1[seq1spot] + \
             new_sequence_1
 
@@ -102,16 +146,10 @@ def align_alignments( alignment_1, alignment_2 ):
     gap_penalty = -3.5
 
     #initialize all of the sequences or alignments with a '-'
-    if type(alignment_1) == list:
-        for i in range(len(alignment_1)):
-            alignment_1[i] = "-" + alignment_1[i]
-    else:
-        alignment_1 = "-" + alignment_1
-    if type(alignment_2) == list:
-        for i in range(len(alignment_2)):
-            alignment_2[i] = "-" + alignment_2[i]
-    else:
-        alignment_2 = "-" + alignment_2
+    for i in range(len(alignment_1)):
+        alignment_1[i] = "-" + alignment_1[i]
+    for i in range(len(alignment_2)):
+        alignment_2[i] = "-" + alignment_2[i]
 
     scoring_matrix = numpy.zeros((len(alignment_2[0]), len(alignment_1[0])))
 
@@ -227,8 +265,8 @@ def calculate_alignment_cell( alignment_1, alignment_2, i, j ):
 
 def calculate_sequence_cell( sequence_1, sequence_2, i, j ):
     #calculates the value to add to a cell given the alignments
-    match_bonus = 1
-    mismatch_penalty = -2
+    match_bonus = 2
+    mismatch_penalty = -3
     cell_addition = 0
 
     if (sequence_2[i] == sequence_1[j]):
@@ -237,6 +275,16 @@ def calculate_sequence_cell( sequence_1, sequence_2, i, j ):
         cell_addition += mismatch_penalty #value from diagonal if they don't match
 
     return cell_addition
+
+def calculate_sequence_gap_penalty( num_gaps ):
+    if num_gaps % 3 == 0:
+        gap_penalty = -5
+    elif num_gaps % 3 == 1:
+        gap_penalty = -3
+    else:
+        gap_penalty = -1
+
+    return gap_penalty
 
 def reorder_alignments(aligns):
     #sorts the alignments by their sequence number
