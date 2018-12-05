@@ -20,6 +20,7 @@ def alignment_output( alignment ):
     place_mark = 0
     while (len(seq1) // end_place) >= 1:
         print(f'{seq_1_name:20} {(start_place + 1 - dash_count_1):5} {seq1[start_place : end_place]}')
+        seq_2_print_index = start_place + 1 - dash_count_2
 
         #create the middle part
         alignment = ""
@@ -43,7 +44,7 @@ def alignment_output( alignment ):
     #print( seq_1_name + " " + seq_1[0:50] )
     #print( seq_2_name + " " + seq_2[0:50] )
 
-        print(f'{seq_2_name:20} {(start_place + 1 - dash_count_2):5} {seq2[start_place : end_place]}')
+        print(f'{seq_2_name:20} {(seq_2_print_index):5} {seq2[start_place : end_place]}')
         print()
         
         start_place += max_per_line
