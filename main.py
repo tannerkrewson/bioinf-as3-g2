@@ -30,6 +30,8 @@ def main():
     
     alignment_output(the_alignment)
 
+    #alignment_output(the_alignment)
+
 
 def get_sequences_to_align_from_command_line( all_sequences ):
     # eg: main.py H1N1 0 1 4 H5N1 0 1
