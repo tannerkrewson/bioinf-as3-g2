@@ -1,28 +1,33 @@
 from alignment import align_alignments, align_sequences
 from upgma import generate_tree
+from bootstrapping import generate_bootstrap_genes, find_boots_distance, generate_boots_tree
 
 class Alignment:
     def __init__( self, seq_list ):
         self.name_list = []
         self.sequence_list = []
+        self.aligned_sequences = []
+        self.phylo_tree = ()
 
         for i in range(len(seq_list)):
             self.name_list.append(seq_list[i][0])
             self.sequence_list.append(seq_list[i][1])
 
-        self.aligned_sequences = []
-        self.phylo_tree = ()
-
         self.score = 0
         self.percent_identical_sites = 0
 
         self.align()
+        self.bootstrap()
 
     def align( self ):
         if len(self.sequence_list) == 2:
             self.pairwise_alignment()
         else:
             self.multi_alignment()
+
+    def bootstrap( self ):
+        boots_genes = generate_bootstrap_genes( self.aligned_sequences )
+        boots_tree = generate_boots_tree( boots_genes )
 
     def pairwise_alignment( self ):
         print("running pairwise alignment")
