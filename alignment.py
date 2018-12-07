@@ -152,6 +152,7 @@ def align_alignments( alignment_1, alignment_2 ):
         alignment_2[i] = "-" + alignment_2[i]
 
     scoring_matrix = numpy.zeros((len(alignment_2[0]), len(alignment_1[0])))
+    direction_matrix = numpy.empty((len(alignment_2[0]), len(alignment_1[0])), dtype=str)
 
     #initialize first row
     for j in range(0, len(alignment_1[0])): 
@@ -160,6 +161,20 @@ def align_alignments( alignment_1, alignment_2 ):
     #initialize first column
     for i in range(0, len(alignment_2[0])): 
         scoring_matrix[i, 0] = i * (gap_penalty * len(alignment_2[0]))
+
+    #initialize first row
+    for j in range(0, len(alignment_1[0])):
+        if len(direction_matrix[0, j - 1]) > 2:
+            direction_matrix[0, j] = "l"
+        else:
+            direction_matrix[0, j] = direction_matrix[0, j - 1] + "l"
+
+    #initialize first column
+    for i in range(0, len(alignment_2[0])):
+        if len(direction_matrix[i - 1, 0]) > 2:
+            direction_matrix[i, 0] = "a"
+        else:
+            direction_matrix[i, 0] = direction_matrix[i - 1, 0] + "a"
 
     #dp matrix calculation
     for i in range(1, len(alignment_2[0])):
@@ -170,10 +185,32 @@ def align_alignments( alignment_1, alignment_2 ):
             diagonal_cell = scoring_matrix[i-1, j-1]
             diagonal_cell += calculate_alignment_cell( alignment_1, alignment_2, i, j )
 
-            left_cell = scoring_matrix[i, j-1] + (gap_penalty * len(alignment_1)) #value from the left
-            above_cell = scoring_matrix[i-1, j] + (gap_penalty * len(alignment_2)) #value from above
+            if direction_matrix[i, j-1][0] == "l":
+                left_cell = scoring_matrix[i, j-1] + (calculate_sequence_gap_penalty(len(direction_matrix[i, j-1])) * len(alignment_1))
+            else:
+                left_cell = scoring_matrix[i, j-1] + (calculate_sequence_gap_penalty(0) * len(alignment_1)) #value from the left
+            
+            if direction_matrix[i-1, j][0] == "a":
+                above_cell = scoring_matrix[i-1, j] + (calculate_sequence_gap_penalty(len(direction_matrix[i-1, j])) * len(alignment_2))
+            else:
+                above_cell = scoring_matrix[i-1, j] + (calculate_sequence_gap_penalty(0) * len(alignment_2)) #value from above
 
-            scoring_matrix[i, j] = max(diagonal_cell, left_cell, above_cell)
+            max_of_cells = max(diagonal_cell, left_cell, above_cell)
+
+            scoring_matrix[i, j] = max_of_cells
+
+            if max_of_cells == left_cell:
+                if direction_matrix[i, j-1][0] == "l":
+                    direction_matrix[i, j] = direction_matrix[i, j-1][:len(direction_matrix[i, j-1]) % 3] + "l"
+                else:
+                    direction_matrix[i, j] = "l"
+            elif max_of_cells == above_cell:
+                if direction_matrix[i-1, j][0] == "a":
+                    direction_matrix[i, j] = direction_matrix[i-1, j][:len(direction_matrix[i-1, j]) % 3] + "a"
+                else:
+                    direction_matrix[i, j] = "a"
+            else:
+                direction_matrix[i, j] = "d"
 
     #figure out how to trace back
     i = len(alignment_2[0]) - 1
@@ -181,6 +218,7 @@ def align_alignments( alignment_1, alignment_2 ):
 
     alignment_score = scoring_matrix[i, j]
     
+    '''
     traceBackDirections = ""
     while i > 0 or j > 0:
         diagonal_cell = scoring_matrix[i-1, j-1]
@@ -202,6 +240,8 @@ def align_alignments( alignment_1, alignment_2 ):
             traceBackDirections = traceBackDirections + "u"
             i = i - 1
 
+    '''
+
     #align with the trace back directions 
     seq1spot = len(alignment_1[0]) - 1
     seq2spot = len(alignment_2[0]) - 1
@@ -210,9 +250,9 @@ def align_alignments( alignment_1, alignment_2 ):
     ["" for i in range(len(alignment_1))]
     new_alignment_2 = \
     ["" for i in range(len(alignment_2))]
-    for i in range(len(traceBackDirections)):
+    while seq1spot > 0 or seq2spot > 0:
         #choose the direction based on current instruction
-        if traceBackDirections[i] == "d":
+        if direction_matrix[seq2spot, seq1spot][0] == "d":
             for j in range(len(alignment_1)):
                 new_alignment_1[j] = alignment_1[j][seq1spot] + \
                 new_alignment_1[j]
@@ -223,7 +263,7 @@ def align_alignments( alignment_1, alignment_2 ):
 
             seq1spot = seq1spot - 1
             seq2spot = seq2spot - 1
-        if traceBackDirections[i] == "u":
+        if direction_matrix[seq2spot, seq1spot][0] == "a":
             for j in range(len(alignment_1)):
                 new_alignment_1[j] = '-' + new_alignment_1[j]
 
@@ -232,7 +272,7 @@ def align_alignments( alignment_1, alignment_2 ):
                 new_alignment_2[j]
 
             seq2spot = seq2spot - 1
-        if traceBackDirections[i] == "b":
+        if direction_matrix[seq2spot, seq1spot][0] == "l":
             for j in range(len(alignment_1)):
                 new_alignment_1[j] = alignment_1[j][seq1spot] + \
                 new_alignment_1[j]
