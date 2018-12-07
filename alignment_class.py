@@ -9,6 +9,7 @@ class Alignment:
         self.sequence_list = []
         self.aligned_sequences = []
         self.phylo_tree = ()
+        self.clade_confidences = {}
 
         for i in range(len(seq_list)):
             self.name_list.append(seq_list[i][0])
@@ -42,8 +43,8 @@ class Alignment:
             clade_search( this_tree, clade_count_dict )
 
         # return a dict containing the clades as keys mapped to their confidence
-        clade_confidences = calculate_confidences( clade_count_dict, BOOTSTRAP_TIMES )
-        print(clade_confidences)
+        self.clade_confidences = calculate_confidences( clade_count_dict, BOOTSTRAP_TIMES )
+        print(self.clade_confidences)
 
     def pairwise_alignment( self ):
         print("running pairwise alignment")
