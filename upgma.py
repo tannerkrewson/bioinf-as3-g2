@@ -110,23 +110,3 @@ def find_avg_distance( seq_list_1, seq_list_2, distance_matrix ):
             count += 1
 
     return sum / count
-
-def test():
-    test_dist_matrix = numpy.array([ 
-        [0, 13, 11,  7, 12, 16, 15],
-        [0,  0,  2, 11, 14, 13,  5],
-        [0,  0,  0,  9, 18, 15,  3],
-        [0,  0,  0,  0,  8, 14, 13],
-        [0,  0,  0,  0,  0, 18, 13],
-        [0,  0,  0,  0,  0,  0, 14],
-        [0,  0,  0,  0,  0,  0,  0]
-    ])
-
-    print( calculate_upgma( test_dist_matrix ) )
-
-def print_mat( mat ):
-    for row in mat:
-        print( row )
-    print()
-
-#test()
