@@ -14,6 +14,13 @@ def alignment_output( alignment ):
 
     dash_count_1 = 0
     dash_count_2 = 0
+    #this take into account any - that are before the first allele
+    while seq1[dash_count_1] == "-":
+      dash_count_1 += 1
+    while seq2[dash_count_2] == "-":
+      dash_count_2 += 1
+      
+    
     
     start_place = 0
     end_place = max_per_line
@@ -21,17 +28,23 @@ def alignment_output( alignment ):
     while (len(seq1) // end_place) >= 1:
         print(f'{seq_1_name:20} {(start_place + 1 - dash_count_1):5} {seq1[start_place : end_place]}')
         seq_2_print_index = start_place + 1 - dash_count_2
+        #this makes sure that any - that were before the
+        #first allel are not double counted
+        if start_place < max_per_line:
+          dash_count_1 = 0
+          dash_count_2 = 0
 
         #create the middle part
         alignment = ""
         while place_mark < (end_place):
             #print(place_mark)
-            if (seq1[place_mark] == '-'):
-                alignment += ' '
-                dash_count_1 += 1
-            elif (seq2[place_mark] == '-'):
-                alignment += ' '
-                dash_count_2 += 1
+            if (seq1[place_mark] == '-') or (seq2[place_mark] == '-'):
+                if seq1[place_mark] == '-':
+                  alignment += ' '
+                  dash_count_1 += 1
+                if seq2[place_mark] == '-':
+                  alignment += ' '
+                  dash_count_2 += 1
             elif seq1[place_mark] == seq2[place_mark]:
                 alignment += '|'
             else:
