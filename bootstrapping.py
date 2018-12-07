@@ -46,13 +46,3 @@ def generate_boots_tree( genes ):
 
     # use upgma to generate a tree from the distance matrix
     return calculate_upgma( distance_matrix )
-
-def calculate_confidences( clade_count_dict, bootstrap_num ):
-    #calculates the confidence of each clade based on counts and number of
-    #bootstraps run
-    confidences = {}
-
-    for i, j in clade_count_dict.items():
-        confidences[ i ] = j / bootstrap_num
-
-    return confidences
