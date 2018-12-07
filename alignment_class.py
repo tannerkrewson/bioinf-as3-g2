@@ -1,28 +1,49 @@
 from alignment import align_alignments, align_sequences
 from upgma import generate_tree
+from bootstrapping import generate_bootstrap_genes, find_boots_distance, generate_boots_tree
+from tree_analysis import build_clade_count_dict, clade_search, calculate_confidences
 
 class Alignment:
     def __init__( self, seq_list ):
         self.name_list = []
         self.sequence_list = []
+        self.aligned_sequences = []
+        self.phylo_tree = ()
 
         for i in range(len(seq_list)):
             self.name_list.append(seq_list[i][0])
             self.sequence_list.append(seq_list[i][1])
 
-        self.aligned_sequences = []
-        self.phylo_tree = ()
-
         self.score = 0
         self.percent_identical_sites = 0
 
         self.align()
+        self.bootstrap()
 
     def align( self ):
         if len(self.sequence_list) == 2:
             self.pairwise_alignment()
         else:
             self.multi_alignment()
+
+    def bootstrap( self ):
+        BOOTSTRAP_TIMES = 20
+        clade_count_dict = {}
+        build_clade_count_dict( self.phylo_tree, clade_count_dict )
+
+        for i in range ( 0, BOOTSTRAP_TIMES) :
+            boots_genes = generate_bootstrap_genes( self.aligned_sequences )
+
+            this_tree = generate_boots_tree( boots_genes )
+
+            print("Bootstrap Tree ", i)
+            print(this_tree)
+
+            clade_search( this_tree, clade_count_dict )
+
+        # return a dict containing the clades as keys mapped to their confidence
+        clade_confidences = calculate_confidences( clade_count_dict, BOOTSTRAP_TIMES )
+        print(clade_confidences)
 
     def pairwise_alignment( self ):
         print("running pairwise alignment")

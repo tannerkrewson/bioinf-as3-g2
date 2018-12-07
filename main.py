@@ -2,13 +2,16 @@ from readfasta import readfasta
 import glob, os, sys
 
 from alignment_class import Alignment
-from upgma import generate_tree
 from visualize import alignment_output
-
-# from output import align
 
 def main():
     print( "*****\nBioinformatics - Assignment 3 - Group 2\n*****\n" )
+
+    if len(sys.argv) < 4:
+        print("Usage example: " + sys.argv[0] + " H1N1 0 1")
+        print("  would align the first and second sequences present " + \
+                  " in the H1N1.fasta file in /genes")
+        exit(1)
 
     sequences = {}
 
@@ -24,10 +27,11 @@ def main():
     # grab the selected sequences from the cmd line args
     sequences_to_align = get_sequences_to_align_from_command_line( sequences )
 
+    # add the sequences to an alignment object, which will run the alignment
     the_alignment = Alignment( sequences_to_align )
 
+    # print the output once alignment is complete
     the_alignment.print_summary()
-    
     alignment_output( the_alignment )
 
 
@@ -50,20 +54,6 @@ def get_sequences_to_align_from_command_line( all_sequences ):
             sequences_to_align.append( the_sequence )
 
     return sequences_to_align
-
-
-def remove_sequence_names( sequences ):
-    result = []
-    for seq in sequences:
-        result.append(seq[1])
-
-    return result
-
-def replace_sequences_with_alignments( sequences, alignments ):
-    for i in range( 0, len(sequences) ):
-        sequences[i][1] = alignments[i]
-
-    return sequences
 
 if __name__ == '__main__':
     main()

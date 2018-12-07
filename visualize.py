@@ -1,5 +1,11 @@
 def alignment_output( alignment ):
-  if( len(alignment.aligned_sequences) == 2 ):
+    if len(alignment.aligned_sequences) == 2:
+        pairwise_output( alignment )
+    else:
+        multi_output( alignment )
+
+        
+def pairwise_output ( alignment ):
     seq1 = alignment.aligned_sequences[0]
     seq2 = alignment.aligned_sequences[1]
 
@@ -16,12 +22,10 @@ def alignment_output( alignment ):
     dash_count_2 = 0
     #this take into account any - that are before the first allele
     while seq1[dash_count_1] == "-":
-      dash_count_1 += 1
+        dash_count_1 += 1
     while seq2[dash_count_2] == "-":
-      dash_count_2 += 1
+        dash_count_2 += 1
       
-    
-    
     start_place = 0
     end_place = max_per_line
     place_mark = 0
@@ -31,8 +35,8 @@ def alignment_output( alignment ):
         #this makes sure that any - that were before the
         #first allel are not double counted
         if start_place < max_per_line:
-          dash_count_1 = 0
-          dash_count_2 = 0
+            dash_count_1 = 0
+            dash_count_2 = 0
 
         #create the middle part
         alignment = ""
@@ -40,22 +44,18 @@ def alignment_output( alignment ):
             #print(place_mark)
             if (seq1[place_mark] == '-') or (seq2[place_mark] == '-'):
                 if seq1[place_mark] == '-':
-                  alignment += ' '
-                  dash_count_1 += 1
+                    alignment += ' '
+                    dash_count_1 += 1
                 if seq2[place_mark] == '-':
-                  alignment += ' '
-                  dash_count_2 += 1
+                    alignment += ' '
+                    dash_count_2 += 1
             elif seq1[place_mark] == seq2[place_mark]:
                 alignment += '|'
             else:
                 alignment += '.'
             place_mark += 1
-        #print(alignment)
-        print((alignment).rjust(27 + max_per_line))
 
-    
-    #print( seq_1_name + " " + seq_1[0:50] )
-    #print( seq_2_name + " " + seq_2[0:50] )
+        print((alignment).rjust(27 + max_per_line))
 
         print(f'{seq_2_name:20} {(seq_2_print_index):5} {seq2[start_place : end_place]}')
         print()
@@ -84,7 +84,8 @@ def alignment_output( alignment ):
                 
         print(f'{seq_2_name:20} {(start_place + 1 - dash_count_2):5} {seq2[start_place:]}')
 
-  else:
+
+def multi_output ( alignment ):
     sequences = alignment.aligned_sequences
     sequences_name = alignment.name_list
 
@@ -106,17 +107,17 @@ def alignment_output( alignment ):
     #(only matters if alignments are different size)
     for i in range ( len(sequences) ): 
         if ( max( len(sequences[LONG_INDEX]), len(sequences[i]) ) == len(sequences[i]) ):
-          LONG_INDEX = i
+            LONG_INDEX = i
 
     while ( len(sequences[LONG_INDEX]) != 0 ): #print the sequences
         print() #for spacing
         for i in range ( len(sequences) ):
-          print(f'{sequences_name[i]:24} {(start_printed + 1 - dash_count[i]):4} {sequences[i][start_index : end]}')
-          for j in range ( len(sequences[i][start_index:end]) ):
-            if( sequences[i][j] == '-' ): #check to see it there's a gap
-                dash_count[i] += 1
-          #take off string that has been writen
-          sequences[i] = sequences[i][max_line:] 
+            print(f'{sequences_name[i]:24} {(start_printed + 1 - dash_count[i]):4} {sequences[i][start_index : end]}')
+            for j in range ( len(sequences[i][start_index:end]) ):
+                if( sequences[i][j] == '-' ): #check to see it there's a gap
+                    dash_count[i] += 1
+            #take off string that has been writen
+            sequences[i] = sequences[i][max_line:] 
         start_printed += max_line
 
 
