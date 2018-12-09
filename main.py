@@ -47,7 +47,7 @@ def get_sequences_to_align_from_command_line( all_sequences ):
     # for each cmd line argument (0 is "main.py", so skip that)
     for i in range( 1, len(sys.argv) ):
         arg = sys.argv[i]
-        if arg.startswith("H"):
+        if arg[0].isalpha():
             current_file = arg
         else:
             the_sequence = all_sequences[current_file][int(arg)]
