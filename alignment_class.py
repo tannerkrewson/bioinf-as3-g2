@@ -1,7 +1,7 @@
 from alignment import align_alignments, align_sequences
 from upgma import generate_tree
 from bootstrapping import generate_bootstrap_genes, find_boots_distance, generate_boots_tree
-from tree_analysis import build_clade_count_dict, clade_search, calculate_confidences
+from tree_analysis import build_clade_count_dict, clade_search, calculate_confidences, tree_position
 
 class Alignment:
     def __init__( self, seq_list ):
@@ -65,6 +65,7 @@ class Alignment:
 
         print("running multi sequence alignment")
         self.aligned_sequences = self.progressive_alignment( self.phylo_tree )
+        self.reorder_alignments()
 
     def progressive_alignment( self, guide_tree ):
         left_tree = guide_tree[0]
@@ -93,6 +94,16 @@ class Alignment:
             return align_sequences( seq_1[0], seq_2[0] )[:2]
         else:
             return align_alignments( seq_1, seq_2 )
+
+    def reorder_alignments( self ):
+        ordered_sequences = ["" for i in self.aligned_sequences]
+
+        for i in range(len(self.aligned_sequences)):
+            sequence_offset = tree_position( self.phylo_tree, i )[0]
+            print(i, sequence_offset)
+            ordered_sequences[i] = self.aligned_sequences[sequence_offset]
+
+        self.aligned_sequences = ordered_sequences
     
     # the percent of sites identical, the overall score, 
     # the parameters used, etc

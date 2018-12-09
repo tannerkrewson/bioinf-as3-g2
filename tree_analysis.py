@@ -24,3 +24,30 @@ def calculate_confidences( clade_count_dict, bootstrap_num ):
         confidences[ i ] = j / bootstrap_num
 
     return confidences
+
+def tree_position( tree, index ):
+    offset = 0
+    found = False
+    if not found:
+        if tree[0] == index:
+            found = True
+            return [offset, found]
+        elif type(tree[0]) != tuple:
+            offset += 1
+        else:
+            result = tree_position( tree[0], index )
+            offset += result[0]
+            found = result[1]
+
+    if not found:
+        if tree[1] == index:
+            found = True
+            return [offset, found]
+        elif type(tree[1]) != tuple:
+            offset += 1
+        else:
+            result = tree_position( tree[1], index )
+            offset += result[0]
+            found = result[1]
+
+    return [offset, found]
