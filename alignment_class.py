@@ -28,23 +28,26 @@ class Alignment:
             self.multi_alignment()
 
     def bootstrap( self ):
-        BOOTSTRAP_TIMES = 20
-        clade_count_dict = {}
-        build_clade_count_dict( self.phylo_tree, clade_count_dict )
+        if( len(self.sequence_list) > 2 ):
+            BOOTSTRAP_TIMES = 20
+            clade_count_dict = {}
+            build_clade_count_dict( self.phylo_tree, clade_count_dict )
 
-        for i in range ( 0, BOOTSTRAP_TIMES) :
-            boots_genes = generate_bootstrap_genes( self.aligned_sequences )
+            for i in range ( 0, BOOTSTRAP_TIMES) :
+                boots_genes = generate_bootstrap_genes( self.aligned_sequences )
 
-            this_tree = generate_boots_tree( boots_genes )
+                this_tree = generate_boots_tree( boots_genes )
 
-            print("Bootstrap Tree ", i)
-            print(this_tree)
+                print("Bootstrap Tree ", i)
+                print(this_tree)
 
-            clade_search( this_tree, clade_count_dict )
+                clade_search( this_tree, clade_count_dict )
 
-        # return a dict containing the clades as keys mapped to their confidence
-        self.clade_confidences = calculate_confidences( clade_count_dict, BOOTSTRAP_TIMES )
-        print(self.clade_confidences)
+            # return a dict containing the clades as keys mapped to their confidence
+            self.clade_confidences = calculate_confidences( clade_count_dict, BOOTSTRAP_TIMES )
+            print(self.clade_confidences)
+        else:
+            print("Running pairwise... no need for bootstrap")
 
     def pairwise_alignment( self ):
         print("running pairwise alignment")
