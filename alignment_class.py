@@ -19,7 +19,10 @@ class Alignment:
         self.percent_identical_sites = 0
 
         self.align()
-        self.bootstrap()
+        if( len(self.sequence_list) > 2 ):
+            self.bootstrap()
+        else:
+            print("Running Pairwise... No need to Bootstrap...")
 
     def align( self ):
         if len(self.sequence_list) == 2:
@@ -28,7 +31,6 @@ class Alignment:
             self.multi_alignment()
 
     def bootstrap( self ):
-        if( len(self.sequence_list) > 2 ):
             BOOTSTRAP_TIMES = 20
             clade_count_dict = {}
             build_clade_count_dict( self.phylo_tree, clade_count_dict )
@@ -46,8 +48,6 @@ class Alignment:
             # return a dict containing the clades as keys mapped to their confidence
             self.clade_confidences = calculate_confidences( clade_count_dict, BOOTSTRAP_TIMES )
             print(self.clade_confidences)
-        else:
-            print("Running pairwise... no need for bootstrap")
 
     def pairwise_alignment( self ):
         print("running pairwise alignment")
