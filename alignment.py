@@ -291,7 +291,7 @@ def align_alignments( alignment_1, alignment_2 ):
 def calculate_alignment_cell( alignment_1, alignment_2, i, j ):
     #calculates the value to add to a cell given the alignments
     match_bonus = 1
-    mismatch_penalty = -2
+    mismatch_penalty = -1
     cell_addition = 0
 
     for sequence_1 in alignment_1:
@@ -305,8 +305,8 @@ def calculate_alignment_cell( alignment_1, alignment_2, i, j ):
 
 def calculate_sequence_cell( sequence_1, sequence_2, i, j ):
     #calculates the value to add to a cell given the alignments
-    match_bonus = 2
-    mismatch_penalty = -3
+    match_bonus = 1
+    mismatch_penalty = -1
     cell_addition = 0
 
     if (sequence_2[i] == sequence_1[j]):
@@ -318,9 +318,9 @@ def calculate_sequence_cell( sequence_1, sequence_2, i, j ):
 
 def calculate_sequence_gap_penalty( num_gaps ):
     if num_gaps % 3 == 0:
-        gap_penalty = -5
-    elif num_gaps % 3 == 1:
         gap_penalty = -3
+    elif num_gaps % 3 == 1:
+        gap_penalty = -2
     else:
         gap_penalty = -1
 
