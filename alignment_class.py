@@ -98,9 +98,10 @@ class Alignment:
     # the parameters used, etc
     def print_summary( self ):
         print("\n*** SUMMARY ***")
-        print("Percent of identical sites:", self.get_percent_sites_identical())
+        print("Percent of identical sites:", self.get_percent_sites_identical() * 100, "%")
         print("Overall score:", self.score if len(self.aligned_sequences) == 2 else "n/a for multi seq alignment")
-        print("Parameters used:", "mm -3; mb +2, gap -5, gap2 -3, gap3 -1")
+        print("Parameters used:", "mp -1; mb +1, gap -3, gap2 -2, gap3 -1")
+        print("Percent of gaps: ", self.get_percent_gaps() * 100, "%")
         print("")
 
         if len(self.aligned_sequences) != 2:
@@ -133,3 +134,13 @@ class Alignment:
 
     def get_name( self, index ):
         return self.name_list[index]
+
+    def get_percent_gaps( self ):
+        gap_count = 0
+        total_count = 0
+
+        for seq in self.aligned_sequences:
+            gap_count += seq.count('-')
+            total_count += len(seq)
+
+        return gap_count / total_count
