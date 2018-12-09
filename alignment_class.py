@@ -31,7 +31,7 @@ class Alignment:
             self.multi_alignment()
 
     def bootstrap( self ):
-            BOOTSTRAP_TIMES = 20
+            BOOTSTRAP_TIMES = 1000
             clade_count_dict = {}
             build_clade_count_dict( self.phylo_tree, clade_count_dict )
 
@@ -40,14 +40,12 @@ class Alignment:
 
                 this_tree = generate_boots_tree( boots_genes )
 
-                print("Bootstrap Tree ", i)
-                print(this_tree)
-
                 clade_search( this_tree, clade_count_dict )
 
             # return a dict containing the clades as keys mapped to their confidence
             self.clade_confidences = calculate_confidences( clade_count_dict, BOOTSTRAP_TIMES )
-            print(self.clade_confidences)
+            for x, y in self.clade_confidences.items():
+                print(x, " : ", y)
 
     def pairwise_alignment( self ):
         print("running pairwise alignment")
@@ -100,7 +98,6 @@ class Alignment:
 
         for i in range(len(self.aligned_sequences)):
             sequence_offset = tree_position( self.phylo_tree, i )[0]
-            print(i, sequence_offset)
             ordered_sequences[i] = self.aligned_sequences[sequence_offset]
 
         self.aligned_sequences = ordered_sequences
