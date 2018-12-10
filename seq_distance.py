@@ -4,19 +4,9 @@ import random
 from alignment import align_sequences
 
 def find_distance( gene1, gene2, i, j ):
-
-    if len(gene1) > 2000:
-        newgene1 = gene1[:int(len(gene1[1])/2)]
-        newgene2 = gene1[int(len(gene1[1])/2):]
-        newgene3 = gene1[:int(len(gene2[1])/2)]
-        newgene4 = gene1[int(len(gene2[1])/2):]
-
-        distance = find_distance(newgene1, newgene2, i, j)[0] + \
-            find_distance(newgene3, newgene4, i, j)[0] / 2
-    else:
-        print("finding distance between seq", i, "and seq", j)
-        aligned_genes = align_sequences(gene1, gene2)
-        distance = dK2P( aligned_genes[0], aligned_genes[1] )
+    print("finding distance between seq", i, "and seq", j)
+    aligned_genes = align_sequences(gene1, gene2)
+    distance = dK2P( aligned_genes[0], aligned_genes[1] )
 
     return [ distance, i, j ]
 
